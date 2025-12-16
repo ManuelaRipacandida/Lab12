@@ -48,4 +48,35 @@ class Controller:
 
     """Implementare la parte di ricerca del cammino minimo"""
     # TODO
+    def handle_cammino_minimo(self,e):
+
+        self._view.lista_visualizzazione_3.controls.clear()
+
+        nodi = list(self._model.G.nodes)
+        if len(nodi) <= 2:  # Serve almeno 3 nodi per un percorso valido
+            self._view.lista_visualizzazione_3.controls.append(
+                ft.Text("Grafo non sufficiente per calcolare il cammino minimo.")
+            )
+            self._view.page.update()
+            return
+
+        # attribuisco alla variabile soglia il valore scelto dall'utente
+        soglia = float(self._view.txt_soglia.value)
+
+        # Calcolo il cammino minimo usando il Model
+        costo, percorso = self._model.cammino_minimo(soglia)  # Funzione del Model
+
+        if not percorso:  # Nessun percorso trovato
+            self._view.lista_visualizzazione_3.controls.append(ft.Text("Nessun cammino valido trovato."))
+        else:
+            # Ciclo sugli archi del percorso e stampo nome + peso
+            for i in range(len(percorso) - 1):
+                nodo1 = percorso[i]# Nodo di partenza
+                nodo2 = percorso[i + 1] # Nodo di arrivo dell'arco corrente
+                # Recupero il peso dell'arco tra nodo1 e nodo2 dal grafo del model
+                peso = self._model.G[nodo1][nodo2]["peso"]
+                self._view.lista_visualizzazione_3.controls.append(
+                    ft.Text(f"{nodo1.nome} --> {nodo2.nome} : [{peso}]")
+                )
+        self._view.page.update()
 
